@@ -1,20 +1,51 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Camera, CameraType } from 'expo-camera/legacy';
+import React, { useEffect, useState } from 'react';
 
 export default function App() {
+
+  //console.log(Camera);
+
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [hasPermission, setHasPermission] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+        const { status } = await Camera.requestCameraPermissionsAsync()
+        setHasPermission(status === "granted")
+    })();
+  }, [])
+
+  if(hasPermission === null){
+    <View/>
+  }
+
+  if(hasPermission === false){
+    <Text>
+      Acesso negado!
+    </Text>
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Camera
+        type={type}
+        style={styles.camera}
+      >
+
+      </Camera>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
   },
+  camera: {
+    width: "100%",
+    height: "100%",
+  }
 });
